@@ -3,8 +3,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PictlogicaHelper
+namespace MebiusLib
 {
+    ///make mini class that has Key and Val property
+    ///usage : make viewmodel has [HogeList, SelectedHogeStr]
+    ///init HogeList and SelectedHogeStr in constructor of viewmodel
+    ///HogeList is list or array with mini class
+    ///xaml : DisplayMemberPath="Key" SelectedValuePath="Val" SelectedValue="{Binding SelectedHogeStr}"
+    ///ItemsSource="{Binding HogeList}"
+    ///Command="{x:Static AppNameSpace:HogeCommands.HogeCmd}"
     class CommandCombobox : ComboBox, ICommandSource
     {
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
