@@ -111,6 +111,8 @@ namespace MebiusLib
                     {
                         this.UserName = s.SelectSingleNode("User").FirstChild.Value;
                         this.PassWord = s.SelectSingleNode("Pass").FirstChild.Value;
+                        Encoding enc = Encoding.GetEncoding("UTF-8");
+                        this.PassWord = enc.GetString(Convert.FromBase64String(this.PassWord));
                         break;
                     }
                 }
