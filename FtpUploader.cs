@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -35,6 +36,7 @@ namespace MebiusLib
             {
                 throw new Exception("ユーザー名またはパスワードが空文字です。");
             }
+            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((s, crt, chain, e) => true);
             //FtpWebRequest のセットアップ
             FtpWebRequest req = (FtpWebRequest)WebRequest.Create(aUri);
             req.Credentials = new NetworkCredential(this.UserName, this.PassWord);
@@ -91,7 +93,6 @@ namespace MebiusLib
         {
             public string UserName { get; private set; }
             public string PassWord { get; private set; }
-            private static string FZ_XSD = @"<?xml version='1.0' encoding='UTF-8'?><xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'><xsd:element name='FileZilla3'><xsd:complexType><xsd:sequence><xsd:element ref='Servers'/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name='Servers'><xsd:complexType><xsd:sequence><xsd:element ref='Server' minOccurs='1' maxOccurs='unbounded'/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name='Server'><xsd:complexType mixed='true'><xsd:sequence><xsd:element name='Host' type='xsd:string'/><xsd:element name='Port' type='xsd:string'/><xsd:element name='Protocol' type='xsd:string'/><xsd:element name='Type' type='xsd:string'/><xsd:element name='User' type='xsd:string'/><xsd:element name='Pass' type='xsd:string'/><xsd:element name='Logontype' type='xsd:string'/><xsd:element name='TimezoneOffset' type='xsd:string'/><xsd:element name='PasvMode' type='xsd:string'/><xsd:element name='MaximumMultipleConnections' type='xsd:string'/><xsd:element name='EncodingType' type='xsd:string'/><xsd:element name='BypassProxy' type='xsd:string'/><xsd:element name='Name' type='xsd:string'/><xsd:element name='Comments' type='xsd:string'/><xsd:element name='LocalDir' type='xsd:string'/><xsd:element name='RemoteDir' type='xsd:string'/><xsd:element name='SyncBrowsing' type='xsd:string'/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>";
             public FileZilla(string aSearchStr)
             {
                 this.UserName = "";
@@ -103,7 +104,8 @@ namespace MebiusLib
             }
             private void getInfo(string aFile, string aStr)
             {
-                XmlDocument xml = XSDUtils.checkAndLoad(aFile, FileZilla.FZ_XSD);
+                XmlDocument xml = new XmlDocument();
+                xml.Load(aFile);
                 XmlNodeList server = xml.GetElementsByTagName("Server");
                 foreach (XmlNode s in server)
                 {
